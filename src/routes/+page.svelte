@@ -16,10 +16,10 @@
 <div>{data.products.price}</div> 
 <div>{data.products.description}</div>
 <div>{data.products.title}</div>
-<div class="carousel carousel-center rounded-box">
+<div class="carousel carousel-center max-w-md p-4 space-x-4 bg-neutral rounded-box">
 	<div class="carousel-item">
 		{#each data.products.images as imageSrs} 
-		<img src={imageSrs} alt ="productImage" />
+		<img src={imageSrs} class="rounded-box" />
 		{/each}
 			
 	</div>
