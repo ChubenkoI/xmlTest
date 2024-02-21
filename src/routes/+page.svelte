@@ -1,7 +1,17 @@
 <script>
+	import { enhance } from '$app/forms';
 	// import { TinySlider } from "svelte-tiny-slider"
 	/** @type {import('./$types').PageData} */
 	export let data;
+	let	searchData = '';
+	const searchFunc = () => {
+		console.log('searchFiled ', searchData);
+		fetch(`https://dummyjson.com/products/search?q=${searchData}`)
+			.then((res) => res.json())
+			.then((resData) => { 
+				data.products = resData.products
+			});
+		}
 	/** 
 		git add .
 		git commit -m "commitname"
@@ -22,6 +32,18 @@
 		<div>{product.description}</div>
 		<div>{product.title}</div>
 	{/each} -->	
+	
+		<div class="join">
+			<input 
+			class="input input-bordered join-item" 
+			name="search"
+			bind:value={searchData}
+			placeholder="Search"
+			/>
+			<button class="btn join-item rounded-r-full" on:click={searchFunc}> Search</button>
+		  </div>		
+
+
   
    <div class="overflow-x-auto">
 	<table class="table">
