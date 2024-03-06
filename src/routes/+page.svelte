@@ -21,7 +21,6 @@
 	const getProductData = (product) => {
 		console.log('product_25', product);
 		productDataFormDialog = product;
-		openDialog = true;
 	};
 	const addProductToCart = (productData) =>{
 	const isProductsInCart = productsInCart.find((product)=>product.id == productData.id);
@@ -31,12 +30,18 @@
 			console.log(productsInCart);
 			countProductInCart = countProductInCart +1;
 			productsInCart = productsInCart;
-			productSumm = productSumm + (productData.price - ((productData.price / 100) * productData.discountPercentage));
+			countSum(productData);
 		}
-
-		
-
 	}
+	const countSum = ((productData)=>{
+		productSumm =Math.round( productSumm + (productData.price - ((productData.price / 100) * productData.discountPercentage)));
+	})
+	const countProductSum = ((productData)=>{
+		productSumm =Math.round( productSumm - (productData.price - ((productData.price / 100) * productData.discountPercentage)));
+
+	})
+
+	
 </script>
 
 <dialog class="modal" class:modal-open={openDialog}>
@@ -58,7 +63,7 @@
 				<p>Remeins {productDataFormDialog.stock}</p>
 				<div class="card-actions justify-between">
 				<div> 
-					{productDataFormDialog.price - (productDataFormDialog.price / 100) * productDataFormDialog.discountPercentage} $ 
+					{Math.round(product.price - (product.price / 100) * product.discountPercentage)} $ 
 					</div>
 					<button class="btn btn-primary"
 					on:click={addProductToCart(productDataFormDialog)}> Buy Now </button>
@@ -143,7 +148,7 @@
 									<div class="font-bold">{product.title}</div>
 									<div class="text-sm opacity-50 text-red-500 line-through">{product.price} $</div>
 									<div class="text-sm opacity-50">
-										{product.price - (product.price / 100) * product.discountPercentage} $
+										{Math.round(product.price - (product.price / 100) * product.discountPercentage)} $
 									</div>
 								</div>
 							</div>
@@ -201,7 +206,8 @@
 					<div class="font-bold">{product.title}</div>
 					<div class="text-sm opacity-50 text-red-500 line-through">{product.price} $</div>
 					<div class="text-sm opacity-50">
-						{product.price - (product.price / 100) * product.discountPercentage} $
+						{Math.round(product.price - (product.price / 100) * product.discountPercentage)}
+						 $
 					</div>
 					
 				</div>
@@ -209,6 +215,8 @@
 					<button class="btn join-item" on:click= {() =>
 						{if(product.count > 1){
 							product.count = product.count - 1
+							
+							countProductSum(product)	
 						}
 						}}>
 						<svg class =  "h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -227,6 +235,9 @@
 				<button class="btn join-item" on:click= {() =>
 					{if(product.count !== product.stock){
 						product.count = product.count + 1
+						countSum(product)						
+
+
 					}
 					}}> 
 					<svg class =  "h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
