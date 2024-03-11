@@ -21,6 +21,7 @@
 	const getProductData = (product) => {
 		console.log('product_25', product);
 		productDataFormDialog = product;
+		openDialog = true;
 	};
 	const addProductToCart = (productData) =>{
 	const isProductsInCart = productsInCart.find((product)=>product.id == productData.id);
@@ -33,9 +34,14 @@
 			countSum(productData);
 		}
 	}
-	const countSum = ((productData)=>{
-		productSumm =Math.round( productSumm + (productData.price - ((productData.price / 100) * productData.discountPercentage)));
-	})
+	const countSum = () => {
+		productSumm = 0;
+		let sum = 0;
+		productsInCart.forEach((product) => {
+			sum +=Math.round( product.sum * product.count);
+		});
+		productSumm = sum;
+	};
 	const countProductSum = ((productData)=>{
 		productSumm =Math.round( productSumm - (productData.price - ((productData.price / 100) * productData.discountPercentage)));
 
@@ -63,7 +69,7 @@
 				<p>Remeins {productDataFormDialog.stock}</p>
 				<div class="card-actions justify-between">
 				<div> 
-					{Math.round(product.price - (product.price / 100) * product.discountPercentage)} $ 
+					{Math.round(productDataFormDialog.price - (productDataFormDialog.price / 100) * productDataFormDialog.discountPercentage)} $ 
 					</div>
 					<button class="btn btn-primary"
 					on:click={addProductToCart(productDataFormDialog)}> Buy Now </button>
@@ -93,7 +99,12 @@
 	</div>
 	<div class="indicator">
 		<span class="indicator-item badge badge-secondary">{countProductInCart}</span> 
-		<button class="btn btn-square" on:click={()=>(openCartSideBar = !openCartSideBar)}>
+		<button class="btn btn-square" on:click={()=>{
+			openCartSideBar = !openCartSideBar;
+			if (openCartSideBar === true){
+				countSum();
+			}
+		}}>
 			<svg class="h-6 w-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 
 				<g id="cart">
@@ -216,7 +227,7 @@
 						{if(product.count > 1){
 							product.count = product.count - 1
 							
-							countProductSum(product)	
+							countSum()	
 						}
 						}}>
 						<svg class =  "h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -235,13 +246,27 @@
 				<button class="btn join-item" on:click= {() =>
 					{if(product.count !== product.stock){
 						product.count = product.count + 1
-						countSum(product)						
+						countSum()						
 
 
 					}
 					}}> 
 					<svg class =  "h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path fill-rule="evenodd" clip-rule="evenodd" d="M12.2929 4.29289C12.6834 3.90237 13.3166 3.90237 13.7071 4.29289L20.7071 11.2929C21.0976 11.6834 21.0976 12.3166 20.7071 12.7071L13.7071 19.7071C13.3166 20.0976 12.6834 20.0976 12.2929 19.7071C11.9024 19.3166 11.9024 18.6834 12.2929 18.2929L17.5858 13H4C3.44772 13 3 12.5523 3 12C3 11.4477 3.44772 11 4 11H17.5858L12.2929 5.70711C11.9024 5.31658 11.9024 4.68342 12.2929 4.29289Z" fill="#000000"/>
+						</svg>
+				</button>
+				<button class="btn join-item" on:click= {() =>{
+						const productIndex = productsInCart.findIndex((el)=>product.id === el.id);
+						console.log("productIndex ",productIndex)
+						product.count = 1;
+						productsInCart.splice(productIndex,1);
+						productsInCart = productsInCart;
+						countSum();
+						countProductInCart = countProductInCart-1;
+					}}> 
+					<svg class =  "h-6 w-6" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+						<path opacity="0.5" d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22Z" fill="#1C274C"/>
+						<path d="M8.96967 8.96967C9.26256 8.67678 9.73744 8.67678 10.0303 8.96967L12 10.9394L13.9697 8.96969C14.2626 8.6768 14.7374 8.6768 15.0303 8.96969C15.3232 9.26258 15.3232 9.73746 15.0303 10.0303L13.0607 12L15.0303 13.9697C15.3232 14.2625 15.3232 14.7374 15.0303 15.0303C14.7374 15.3232 14.2625 15.3232 13.9696 15.0303L12 13.0607L10.0304 15.0303C9.73746 15.3232 9.26258 15.3232 8.96969 15.0303C8.6768 14.7374 8.6768 14.2626 8.96969 13.9697L10.9394 12L8.96967 10.0303C8.67678 9.73744 8.67678 9.26256 8.96967 8.96967Z" fill="#1C274C"/>
 						</svg>
 				</button>
 				</div>
