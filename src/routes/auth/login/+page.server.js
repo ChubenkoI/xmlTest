@@ -22,28 +22,42 @@ function validateEmail(email) {
 
 export const actions = {
     login: async(event)=>{
-        const formData = Object.fromEntries(await event.request.formData());    
+        const formData = Object.fromEntries(await event.request.formData());   
+        const errorsObj = {}  
+        const findUser = users.find((users)=>users.email === formData.email)
         console.log("Data", formData);
-        if (validateEmail(formData.email)){
-            const findUser = users.find((users)=>users.email === formData.email)
-            console.log("finduser", findUser)
-            if(findUser !== undefined && formData.password === findUser?.password){
-                loggetUser = findUser
-            }
+        if (!validateEmail(formData.email)){
+            errorsObj.email = "Email is not valid";
         }
-    },
+        if(findUser !== undefined && formData.password === findUser?.password){
+            loggetUser = findUser;
+            
+        }else{
+                errorsObj.email = "Password or email is not correct";
+                errorsObj.password = "Password or email is not correct";
+        }
+        if(Object.values(errorsObj).length){
+            return fail(400,errorsObj);}
+        return loggetUser
+        }, 
+    
     register: async(event)=>{
         const formData = Object.fromEntries(await event.request.formData());
         const findUser = users.find((users)=>users.email === formData.email)
         if(findUser !== undefined){
-            return fail(400, {email: formData.email, message: "Email registered"})
-        }    
+            return fail(400, {email: "Email registered"})
+        }   
+        const errorsObj = {} 
         console.log("Data", formData);
         if(!validateEmail(formData.email)){
-            return fail(400, {email: formData.email, message: "Email is not valid"})
+            errorsObj.email = "Email is not valid";
         }
         if(!formData.password || formData.password.length < 6){
-            return fail(400, {password: formData.password, message: "Password is more 6 character"})
+            errorsObj.password = "Password is more 6 character";
+        }
+        if(Object.values(errorsObj).length){
+            console.log(errorsObj);
+            return fail(400,errorsObj);
         }
         if (validateEmail(formData.email)){
             const findUser = users.find((users)=>users.email === formData.email)
