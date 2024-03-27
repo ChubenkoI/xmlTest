@@ -3,11 +3,11 @@ import bcrypt from "bcrypt";
 const users = [
     {
         email: "test1@gmail.com",
-        password: "1"
+        password: "$2b$10$igT.JhB7/2yPMuzXQ/BMAeiTkNpFYbiCoW0.IfHlFLA9Thx61ZFLy"
     },
     {
         email: "test2@gmail.com",
-        password: "123456"
+        password: "$2b$10$XM032qoEaLt2TzyjGgxuGewkbLNWziozErJdkXWxR/.QSDKpysrWW"
     }
 ]
 let loggetUser = {};
@@ -31,19 +31,23 @@ export const actions = {
             errorsObj.email = "Email is not valid";
         }
 
-        
-        const isPasswordCompare = bcrypt.compareSync(formData.password, findUser?.password);
-        if(findUser !== undefined && isPasswordCompare){
+        if(findUser === undefined){
+            errorsObj.password = "User is not register"
+        }
+        if(Object.values(errorsObj).length){
+            return fail(400,errorsObj);}
+        const isPasswordCompare = bcrypt.compareSync(formData.password,     findUser?.password);
+        if(isPasswordCompare){
             loggetUser = findUser;
-            
+            return loggetUser
         }else{
                 errorsObj.email = "Password or email is not correct";
                 errorsObj.password = "Password or email is not correct";
         }
+        
         if(Object.values(errorsObj).length){
             return fail(400,errorsObj);}
-        return loggetUser
-        }, 
+    }, 
     
     register: async(event)=>{
         const formData = Object.fromEntries(await event.request.formData());
@@ -69,6 +73,7 @@ export const actions = {
             if(findUser === undefined && formData.password){
                 const salt = bcrypt.genSaltSync(10);
                 const hash = bcrypt.hashSync(formData.password, salt);
+                console.log("hash", hash)
                 const newUser = {
                     email: formData.email,
                     password: hash
