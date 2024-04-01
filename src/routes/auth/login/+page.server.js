@@ -1,5 +1,6 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import bcrypt from "bcrypt";
+
 const users = [
     {
         email: "test1@gmail.com",
@@ -13,6 +14,9 @@ const users = [
 let loggetUser = {};
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
+    if (Object.values(loggetUser).length){
+        redirect(302, '/');
+    }
     return {users, user: loggetUser};
 };
 
@@ -39,7 +43,7 @@ export const actions = {
         const isPasswordCompare = bcrypt.compareSync(formData.password,     findUser?.password);
         if(isPasswordCompare){
             loggetUser = findUser;
-            return loggetUser
+            redirect(302, '/');
         }else{
                 errorsObj.email = "Password or email is not correct";
                 errorsObj.password = "Password or email is not correct";
@@ -47,6 +51,7 @@ export const actions = {
         
         if(Object.values(errorsObj).length){
             return fail(400,errorsObj);}
+        
     }, 
     
     register: async(event)=>{

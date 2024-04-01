@@ -1,5 +1,6 @@
 <script>
     import { enhance } from '$app/forms';
+    import { goto } from '$app/navigation';
     let typePassword ="password";
     export let data;
 
@@ -35,6 +36,8 @@ login
                 errorsLogin = result.data;
             }else if(result.type === "success"){
                 data.user = result.data;
+            }else if (result.type === 'redirect') {
+				goto(result.location);
 
             }
 			// `result` is an `ActionResult` object
