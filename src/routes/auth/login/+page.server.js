@@ -43,7 +43,7 @@ export const actions = {
         const isPasswordCompare = bcrypt.compareSync(formData.password,     findUser?.password);
         if(isPasswordCompare){
             loggetUser = findUser;
-            redirect(302, '/');
+            
         }else{
                 errorsObj.email = "Password or email is not correct";
                 errorsObj.password = "Password or email is not correct";
@@ -51,7 +51,7 @@ export const actions = {
         
         if(Object.values(errorsObj).length){
             return fail(400,errorsObj);}
-        
+        redirect(302, '/');
     }, 
     
     register: async(event)=>{
@@ -88,6 +88,7 @@ export const actions = {
                 loggetUser = newUser;
             }
         }
+    redirect(302, '/');
     }
 } 
     
